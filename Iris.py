@@ -10,61 +10,67 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = int(os.getenv('DISCORD_GUILD'))
 intents = discord.Intents.all()
 
-client = discord.Client(intents=intents)
-print(GUILD, type(GUILD))
-guild = await client.get_guild(GUILD)
+bot = commands.Bot(intents=intents,command_prefix='!')
 
-@client.event
+@bot.command(name = 'test', help = 'test method')
+async def _test(ctx):
+    await ctx.send("response") 
+
+@bot.command(name='rats',help='lists all who are certified rat ticklers')
+async def _rat(ctx):
+    await ctx.send("The following are our Certified Rat Ticklers (CRT): \n Holden \n Zach \n Idk")
+
+@bot.command(name='sexism',help='The bot is also a cs major')
+async def _sexism(ctx):
+    await ctx.send("I hate women \n -Unknown CS major")
+
+@bot.command(name='tiddy',help='tiddy')
+async def _tiddy(ctx):
+    await ctx.send("What do men like?: \n TIDDY")
+
+# gen format of a command, 
+@bot.command(name = 'command')
+async def _command(ctx, arg):
+  await ctx.send(arg)
+
+@bot.command(name='quote')
+async def _quote(ctx, quote, person):
+    quote_channel
+
+# this function will be used to config the bot to set input and output channels for certin features
+@bot.command()
+async def setup(ctx):
+      pass
+
+@bot.event
 async def on_ready():
     # load information in iris_config.json
-    print(f'{client.user} has arrived')
+    print(f'{bot.user} has arrived')
 
-@client.event
+@bot.event
 async def on_ready():
-    for guild in client.guilds:
+    guild = bot.get_guild(GUILD)
+    for guild in bot.guilds:
         if guild.name == GUILD:
             break
 
     print(
-        f'{client.user} is connected to the following guild:\n'
+        f'{bot.user} is connected to the following guild:\n'
         f'{guild.name}(id: {guild.id})'
     )
-    
-
-
-members = '\n - '.join([member.name for member in guild.members])
-print(f'Guild Members:\n - {members}')
-
-role_refrence = {
-    # emoji : role
-}
-
-client = commands.Bot(command_prefix='~')
-# gen format of a command, 
-@client.command()
-async def commandCall(ctx):
-  await ctx.send('output')
-
-# this function will be used to config the bot to set input and output channels for certin features
-@client.command()
-async def setup(ctx):
-      pass
-
 # this function will 
 
 intents = discord.Intents.default()
-intents.message_content = True
-
-
-    
-@client.event
+intents.message_content = True  
+@bot.event
 async def on_message(message: discord.Message):
-    if message.author == client.user:
+    if message.author == bot.user:
         return
     
-    if message.content.startswint('$hello'):
-        await message.channel.send('Hello!')
-
+    if message.content.startswith('$hello'):
+        await message.channel.send('I touch rats')
+    await bot.process_commands(message)    
+    
 @commands.Cog.listener()
 async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
     member = payload.member
@@ -82,4 +88,4 @@ async def on_raw_reaction_remove(payload: discord.RawReactionActionEvent):
     if message_id == 'role id here!!!!!':
         #remove role
         pass
-client.run(TOKEN)
+bot.run(TOKEN)
