@@ -10,18 +10,20 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = int(os.getenv('DISCORD_GUILD'))
 intents = discord.Intents.all()
 
-data_dict = {}
-
-def load_iris_data():
+def get_iris_data():
+    global data_dict
     with open('iris_config.json','r') as iris_config:
-        globals()["data_dict"] = json.load(iris_config)
+        iris_dict = json.load(iris_config)
+    return iris_dict
+
+data_dict = get_iris_data()
 
 def save_iris_data():
     global data_dict
     with open('iris_config.json', 'w') as iris_config:
         iris_config.write(json.dumps(data_dict))
 
-bot = commands.Bot(intents=intents,command_prefix='!')
+bot = commands.Bot(intents=intents,command_prefix='!',activity = discord.Game(name="Not Showering"))
 
 @bot.command(name = 'test', help = 'test method')
 async def _test(ctx):
@@ -47,6 +49,8 @@ async def _command(ctx, arg):
 @bot.command(name='quote')
 async def _quote(ctx, quote, person):
     global data_dict
+    print(data_dict)
+    print(globals()["data_dict"])
     quote_channel_id = data_dict['quote_channel_id']
     print(quote_channel_id)
     quote_channel = bot.get_channel(quote_channel_id)
@@ -57,14 +61,13 @@ async def _set_quote(ctx: commands.Context):
     global data_dict
     quote_channel_id = ctx.channel.id
     
-    globals()["data_dict"].update({'quote_channel_id':quote_channel_id})
+    data_dict.update({'quote_channel_id':quote_channel_id})
     save_iris_data()
 
 @bot.event
 async def on_ready():
     # load information in iris_config.json
     global data_dict
-    load_iris_data()
 
     print(f'{bot.user} has arrived')
 
@@ -99,7 +102,6 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
     reaction = payload.emoji
     if message_id == 'role id here!!!!!':
         #assign role
-        
         pass
 
 @commands.Cog.listener()
@@ -110,7 +112,5 @@ async def on_raw_reaction_remove(payload: discord.RawReactionActionEvent):
     if message_id == 'role id here!!!!!':
         #remove role
         pass
-
-
 
 bot.run(TOKEN)
