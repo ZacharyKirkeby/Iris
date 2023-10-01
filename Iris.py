@@ -10,6 +10,17 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = int(os.getenv('DISCORD_GUILD'))
 intents = discord.Intents.all()
 
+data_dict = {}
+
+def load_iris_data():
+    with open('iris_config.json','r') as iris_config:
+        globals()["data_dict"] = json.load(iris_config)
+
+def save_iris_data():
+    global data_dict
+    with open('iris_config.json', 'w') as iris_config:
+        iris_config.write(json.dumps(data_dict))
+
 bot = commands.Bot(intents=intents,command_prefix='!')
 
 @bot.command(name = 'test', help = 'test method')
@@ -35,18 +46,26 @@ async def _command(ctx, arg):
 
 @bot.command(name='quote')
 async def _quote(ctx, quote, person):
-    quote_channel_id = 1157866633864413244
+    global data_dict
+    quote_channel_id = data_dict['quote_channel_id']
+    print(quote_channel_id)
     quote_channel = bot.get_channel(quote_channel_id)
     await quote_channel.send(f"\"{quote}\" - {person}")
 
-# this function will be used to config the bot to set input and output channels for certin features
-@bot.command()
-async def setup(ctx):
-      pass
+@bot.command(name='set_quote')
+async def _set_quote(ctx: commands.Context):
+    global data_dict
+    quote_channel_id = ctx.channel.id
+    
+    globals()["data_dict"].update({'quote_channel_id':quote_channel_id})
+    save_iris_data()
 
 @bot.event
 async def on_ready():
     # load information in iris_config.json
+    global data_dict
+    load_iris_data()
+
     print(f'{bot.user} has arrived')
 
 @bot.event
@@ -80,6 +99,7 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
     reaction = payload.emoji
     if message_id == 'role id here!!!!!':
         #assign role
+        
         pass
 
 @commands.Cog.listener()
@@ -90,4 +110,7 @@ async def on_raw_reaction_remove(payload: discord.RawReactionActionEvent):
     if message_id == 'role id here!!!!!':
         #remove role
         pass
+
+
+
 bot.run(TOKEN)

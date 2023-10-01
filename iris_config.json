@@ -1,0 +1,17 @@
+{
+    "quote_channel_id": 1157866633864413244,
+"role_assign_data" : [
+        {
+            "role_id": "",
+            "emoji": "🪱",
+            "_comment0": "above emoji is for Dune",
+            "message_id": "message id"
+        },
+        {
+            "role_id": "",
+            "emoji": "\ud83d\udc00", 
+            "_comment1": "above emoji is for certified rat tickler",
+            "message_id": "message id"
+        }
+    ]
+}
